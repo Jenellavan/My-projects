@@ -9,8 +9,7 @@ pipeline {
     stage('Install aws-cli on slave') {
       steps {
         sh '''
-          #!/bin/bash
-          set -euxo pipefail
+          set -eu
 
           # Install base packages
           sudo apt-get update
@@ -31,7 +30,7 @@ pipeline {
 
           # Install Ansible AWS collection
           ansible-galaxy collection install amazon.aws --force
-        '''  
+        '''
       }
     }
 
@@ -46,8 +45,7 @@ pipeline {
             )
           ]) {
             sh '''
-              #!/bin/bash
-              set -euxo pipefail
+              set -eu
               ansible-playbook -i inventory/prod/aws_ec2.yml playbooks/site.yml
             '''
           }
@@ -69,3 +67,4 @@ pipeline {
     }
   }
 }
+
