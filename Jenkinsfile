@@ -9,21 +9,32 @@ pipeline {
     stage('Install aws-cli on slave') {
       steps {
         sh '''
-            sudo apt update
-            sudo apt install -y python3-pip jq curl unzip
+          #!/bin/bash
+          set -euxo pipefail
 
-            # Install AWS CLI v2 manually
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-            rm -rf aws awscliv2.zip
-            pip3 install --upgrade boto3 botocore
-            ansible-galaxy collection install amazon.aws --force
-            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
-            sudo apt install -y nodejs
-       '''  
+          # Install base packages
+          sudo apt-get update
+          sudo apt-get install -y python3-pip jq unzip curl
+
+          # Install AWS CLI v2
+          curl -sSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip -q awscliv2.zip
+          sudo ./aws/install --update
+          rm -rf awscliv2.zip aws
+
+          # Upgrade boto libraries
+          pip3 install --upgrade boto3 botocore
+
+          # Install Node.js 18
+          curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash -
+          sudo apt-get install -y nodejs
+
+          # Install Ansible AWS collection
+          ansible-galaxy collection install amazon.aws --force
+        '''  
       }
     }
+
     stage('Provision Infrastructure') {
       steps {
         sshagent(credentials: ['ssh-agent-key']) {
@@ -35,7 +46,9 @@ pipeline {
             )
           ]) {
             sh '''
-              ansible-playbook -i inventory/prod/aws_ec2.yml playbooks/site.yml 
+              #!/bin/bash
+              set -euxo pipefail
+              ansible-playbook -i inventory/prod/aws_ec2.yml playbooks/site.yml
             '''
           }
         }
