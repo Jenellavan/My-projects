@@ -310,8 +310,8 @@ http://<nexus-server-ip>:8081
 
 | Repository Name   | Type    | Version Policy | Blob Store |
 |-------------------|---------|----------------|------------|
-| `ezlearn-releases`  | hosted  | Release        | default    |
-| `ezlearn-snapshots` | hosted  | Snapshot       | default    |
+| `ezlearn-release`  | hosted  | Release        | default    |
+| `ezlearn-snapshot` | hosted  | Snapshot       | default    |
 | `ezlearn-public`    | group   | -              | default    |
 
 3. For the group repository (`maven-public`):
