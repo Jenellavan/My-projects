@@ -9,7 +9,6 @@ pipeline {
         DEPLOY_PATH = '/opt/tomcat/webapps'
         VERSION = '1.0.0'
         MAVEN_HOME = '/opt/maven'
-        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -21,25 +20,25 @@ pipeline {
 
         stage('Check Maven Version') {
             steps {
-                sh 'mvn -version'
+                sh 'export PATH=$MAVEN_HOME/bin:$PATH && mvn -version'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'mvn clean compile'
+                sh 'export PATH=$MAVEN_HOME/bin:$PATH && mvn clean compile'
             }
         }
 
         stage('Unit Test') {
             steps {
-                sh 'mvn test'
+                sh 'export PATH=$MAVEN_HOME/bin:$PATH && mvn test'
             }
         }
 
         stage('Checkstyle Analysis') {
             steps {
-                sh 'mvn checkstyle:check'
+                sh 'export PATH=$MAVEN_HOME/bin:$PATH && mvn checkstyle:check'
             }
         }
 
@@ -47,6 +46,7 @@ pipeline {
             steps {
                 withSonarQubeEnv("${SONARQUBE_SERVER}") {
                     sh '''
+                        export PATH=$MAVEN_HOME/bin:$PATH && \
                         mvn sonar:sonar \
                           -Dsonar.projectKey=ezlearn \
                           -Dsonar.host.url=http://sonarqube.mitechnology.org:9000
@@ -58,7 +58,8 @@ pipeline {
         stage('Package WAR') {
             steps {
                 sh '''
-                    mvn package
+                    export PATH=$MAVEN_HOME/bin:$PATH && \
+                    mvn package && \
                     cp target/ezlearn-1.0.0.war target/ezlearn.war
                 '''
             }
@@ -71,7 +72,6 @@ pipeline {
                     def warName = "ezlearn-${timestamp}.war"
                     def warPath = "target/${warName}"
 
-                    // Copy WAR with versioned filename
                     sh "cp target/ezlearn.war ${warPath}"
 
                     withCredentials([usernamePassword(
@@ -80,6 +80,7 @@ pipeline {
                         passwordVariable: 'NEXUS_PASS'
                     )]) {
                         sh """
+                            export PATH=$MAVEN_HOME/bin:$PATH && \
                             mvn deploy:deploy-file \
                               -DgroupId=com.ezlearn \
                               -DartifactId=ezlearn \
