@@ -1,6 +1,9 @@
 pipeline {
     agent { label 'infra-build-node' }
-
+    tools {
+        maven 'maven' // MUST match the name in Global Tool Configuration
+    }
+    
     environment {
         SONARQUBE_SERVER = 'SonarQube'
         NEXUS_URL = 'http://54.172.175.151:8081/'
