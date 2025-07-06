@@ -8,7 +8,6 @@ pipeline {
         DEPLOY_SERVER = 'ubuntu@18.207.173.147'
         DEPLOY_PATH = '/opt/tomcat/webapps'
         VERSION = '1.0.0'
-        PATH = "/opt/maven/bin:$PATH" // ✅ Add this line
     }
 
     stages {
