@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'infra-build-node' }
     tools {
-        maven 'maven' // MUST match the name in Global Tool Configuration
+        maven 'maven 3.9.10' // MUST match the name in Global Tool Configuration
     }
     
     environment {
