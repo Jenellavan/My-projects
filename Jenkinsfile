@@ -5,7 +5,7 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQube'
         NEXUS_URL = 'http://nexus.mitechnology.org:8081'
         NEXUS_REPO = 'ezlearn-release'
-        DEPLOY_SERVER = 'ubuntu@52.207.238.92'
+        DEPLOY_SERVER = 'ubuntu@18.207.173.147'
         DEPLOY_PATH = '/opt/tomcat/webapps'
         VERSION = '1.0.0'
     }
