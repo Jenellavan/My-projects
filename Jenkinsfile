@@ -1,6 +1,10 @@
 pipeline {
     agent { label 'infra-build-node' }
 
+    tools {
+        maven 'Maven3.9.10' // <-- Must match name defined in Global Tool Configuration
+    }
+
     environment {
         SONARQUBE_SERVER = 'SonarQube'
         NEXUS_URL = 'http://54.172.175.151:8081/'
@@ -14,6 +18,12 @@ pipeline {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+
+        stage('Check Maven Version') {
+            steps {
+                sh 'mvn -version'
             }
         }
 
@@ -71,18 +81,18 @@ pipeline {
                         usernameVariable: 'NEXUS_USER',
                         passwordVariable: 'NEXUS_PASS'
                     )]) {
-                        def mvnCmd = "mvn deploy:deploy-file" +
-                                    " -DgroupId=com.ezlearn" +
-                                    " -DartifactId=ezlearn" +
-                                    " -Dversion=${timestamp}" +
-                                    " -Dpackaging=war" +
-                                    " -Dfile=${warPath}" +
-                                    " -DrepositoryId=ezlearn-release" +
-                                    " -Durl=${NEXUS_URL}/repository/${NEXUS_REPO}/" +
-                                    " -DgeneratePom=true" +
-                                    " --settings jenkins/settings.xml"
-
-                        sh mvnCmd
+                        sh """
+                            mvn deploy:deploy-file \
+                              -DgroupId=com.ezlearn \
+                              -DartifactId=ezlearn \
+                              -Dversion=${timestamp} \
+                              -Dpackaging=war \
+                              -Dfile=${warPath} \
+                              -DrepositoryId=${NEXUS_REPO} \
+                              -Durl=${NEXUS_URL}/repository/${NEXUS_REPO}/ \
+                              -DgeneratePom=true \
+                              --settings jenkins/settings.xml
+                        """
                     }    
                 }
             }
@@ -92,7 +102,7 @@ pipeline {
             steps {
                 sshagent (credentials: ['ssh-agent-key']) {
                    sh """  
-                        scp target/ezlearn.war target/ROOT.war
+                        cp target/ezlearn.war target/ROOT.war
                         scp -o StrictHostKeyChecking=no target/ROOT.war ${DEPLOY_SERVER}:/tmp/ROOT.war
                         ssh -o StrictHostKeyChecking=no ${DEPLOY_SERVER} 'sudo mv /tmp/ROOT.war ${DEPLOY_PATH}/ROOT.war && sudo chown tomcat:tomcat ${DEPLOY_PATH}/ROOT.war'
                     """    
