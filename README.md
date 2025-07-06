@@ -365,18 +365,38 @@ http://<nexus-server-ip>:8081
 2. **Install and Configure maven on jenkins slave node**:
 
 ```bash
-apt update
-apt install -y wget ca-certificates curl gnupg lsb-release
-wget https://mirrors.estointernet.in/apache/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
-tar -xvf apache-maven-3.6.3-bin.tar.gz -C /opt
-mv /opt/apache-maven-3.6.3 /opt/maven
+# Update package lists
+sudo apt update
 
-bash -c 'cat <<EOF >/etc/profile.d/maven.sh
+# Install required tools
+sudo apt install -y wget ca-certificates curl gnupg lsb-release
+
+# Download Apache Maven 3.6.3 from the official archive
+wget https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz
+
+# Extract Maven to /opt
+sudo tar -xvf apache-maven-3.6.3-bin.tar.gz -C /opt
+
+# Rename to /opt/maven for consistency
+sudo mv /opt/apache-maven-3.6.3 /opt/maven
+
+# Create environment variables script
+sudo bash -c 'cat <<EOF > /etc/profile.d/maven.sh
 export M2_HOME=/opt/maven
 export MAVEN_HOME=/opt/maven
 export PATH=\$PATH:\$M2_HOME/bin
 EOF'
+
+# Make the script executable (optional but good practice)
+sudo chmod +x /etc/profile.d/maven.sh
+
+# Load the new environment variables into the current shell
+source /etc/profile.d/maven.sh
+
+# Verify installation
 mvn -version
+
+
 ```
 
 
