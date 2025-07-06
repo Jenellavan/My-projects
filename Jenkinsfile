@@ -89,7 +89,7 @@ pipeline {
                               -Dfile=${warPath} \
                               -DrepositoryId=${NEXUS_REPO} \
                               -Durl=${NEXUS_URL}/repository/${NEXUS_REPO}/ \
-                              -DgeneratePom=true \
+                              -DgeneratePom=false \
                               --settings jenkins/settings.xml
                         """
                     }
