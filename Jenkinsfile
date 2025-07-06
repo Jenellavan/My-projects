@@ -1,6 +1,6 @@
 pipeline {
     agent { label 'infra-build-node' }
-       
+
     environment {
         SONARQUBE_SERVER = 'SonarQube'
         NEXUS_URL = 'http://54.172.175.151:8081/'
@@ -8,6 +8,8 @@ pipeline {
         DEPLOY_SERVER = 'ubuntu@18.207.173.147'
         DEPLOY_PATH = '/opt/tomcat/webapps'
         VERSION = '1.0.0'
+        MAVEN_HOME = '/opt/maven'
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
     }
 
     stages {
@@ -69,6 +71,7 @@ pipeline {
                     def warName = "ezlearn-${timestamp}.war"
                     def warPath = "target/${warName}"
 
+                    // Copy WAR with versioned filename
                     sh "cp target/ezlearn.war ${warPath}"
 
                     withCredentials([usernamePassword(
@@ -88,7 +91,7 @@ pipeline {
                               -DgeneratePom=true \
                               --settings jenkins/settings.xml
                         """
-                    }    
+                    }
                 }
             }
         }
@@ -96,7 +99,7 @@ pipeline {
         stage('Deploy to Tomcat') {
             steps {
                 sshagent (credentials: ['ssh-agent-key']) {
-                   sh """  
+                    sh """  
                         cp target/ezlearn.war target/ROOT.war
                         scp -o StrictHostKeyChecking=no target/ROOT.war ${DEPLOY_SERVER}:/tmp/ROOT.war
                         ssh -o StrictHostKeyChecking=no ${DEPLOY_SERVER} 'sudo mv /tmp/ROOT.war ${DEPLOY_PATH}/ROOT.war && sudo chown tomcat:tomcat ${DEPLOY_PATH}/ROOT.war'
