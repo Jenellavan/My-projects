@@ -49,7 +49,7 @@ pipeline {
                         export PATH=$MAVEN_HOME/bin:$PATH && \
                         mvn sonar:sonar \
                           -Dsonar.projectKey=ezlearn \
-                          -Dsonar.host.url=http://sonarqube.mitechnology.org:9000
+                          -Dsonar.host.url=http://13.222.51.162:9000
                     '''
                 }
             }
