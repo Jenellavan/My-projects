@@ -3,8 +3,8 @@ pipeline {
  agent { label 'infra-build-node' }
  environment {
      SONAR_SCANNER = tool 'SonarQubeScanner'
-     NEXUS_URL = 'http://nexus.mitechnology.org:8081/'
-     TOMCAT_URL = 'http://tomcat.mitechnology.org:8080/manager/text'
+     NEXUS_URL = 'http://52.202.80.121:8081/'
+     TOMCAT_URL = 'http://44.204.54.142:8080/manager/text'
  }
  stages {
      stage('Build & Test') {
