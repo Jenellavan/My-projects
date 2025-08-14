@@ -227,6 +227,13 @@ Run the following command on master and copy keys over to slave node
    - click save
   
    **Store Credentials in Jenkins**
+```
+ssh-agent-key
+include the key.pem key 
+ubuntu
+````
+
+
 
    - Install **Credentials** and **Credentials Binding** plugins  
    - Go to: Jenkins → Manage → Credentials → Global → Add Credentials  
