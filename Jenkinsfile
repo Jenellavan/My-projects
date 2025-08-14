@@ -45,7 +45,7 @@ pipeline {
                     sh """
                         mvn sonar:sonar \
                           -Dsonar.projectKey=ezlearn \
-                          -Dsonar.host.url=http://sonarqube.mitechnology.org:9000 \
+                          -Dsonar.host.url=http://54.224.144.227:9000 \
                           -Dsonar.qualitygate.wait=true \
                           -Dsonar.coverage.jacoco.xmlReportPaths=${SONAR_JACOCO_REPORT_PATH} \
                           -Dsonar.java.binaries=target/classes \
