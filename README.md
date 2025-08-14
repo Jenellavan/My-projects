@@ -418,8 +418,8 @@ pipeline {
  agent any
  environment {
      SONAR_SCANNER = tool 'SonarQubeScanner'
-     NEXUS_URL = 'http://<nexus-ip>:8081'
-     TOMCAT_URL = 'http://<tomcat-ip>:8080/manager/text'
+     NEXUS_URL = 'http://52.202.80.121:8081'
+     TOMCAT_URL = 'http://44.204.54.142:8080/manager/text'
  }
  stages {
      stage('Build & Test') {
