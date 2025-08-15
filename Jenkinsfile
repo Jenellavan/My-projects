@@ -5,7 +5,7 @@ pipeline {
         SONARQUBE_SERVER = 'SonarQube'
         NEXUS_URL = 'http://52.202.80.121:8081/'
         NEXUS_REPO = 'ezlearn-release'
-        DEPLOY_SERVER = 'ubuntu@18.207.173.147'
+        DEPLOY_SERVER = 'ubuntu@172-31-87-178'
         DEPLOY_PATH = '/opt/tomcat/webapps'
         VERSION = '1.0.0'
         MAVEN_HOME = '/opt/maven'
