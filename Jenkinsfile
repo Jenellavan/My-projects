@@ -92,9 +92,13 @@ pipeline {
             steps {
                 sshagent (credentials: ['ssh-agent-key']) {
                    sh """  
-                        scp target/ezlearn.war target/ROOT.war
+                        cp target/ezlearn.war target/ROOT.war
                         scp -o StrictHostKeyChecking=no target/ROOT.war ${DEPLOY_SERVER}:/tmp/ROOT.war
-                        ssh -o StrictHostKeyChecking=no ${DEPLOY_SERVER} 'sudo mv /tmp/ROOT.war ${DEPLOY_PATH}/ROOT.war && sudo chown tomcat:tomcat ${DEPLOY_PATH}/ROOT.war'
+                        ssh -o StrictHostKeyChecking=no ${DEPLOY_SERVER} '\
+                        test -d ${DEPLOY_PATH} || { echo "Deploy path ${DEPLOY_PATH} not found"; exit 2; }; \
+                             sudo mv /tmp/ROOT.war ${DEPLOY_PATH}/ROOT.war && \
+                             sudo chown tomcat:tomcat ${DEPLOY_PATH}/ROOT.war && \
+                             sudo systemctl restart ${TOMCAT_SERVICE} \
                     """    
                 }
             }
