@@ -3,7 +3,7 @@ pipeline {
 
   environment {
     AWS_DEFAULT_REGION = 'us-east-1'
-    DYNATRACE_API_TOKEN = credentials('DYNATRACE_API_TOKEN')
+    Dynatrace_api_token = credentials('Dynatrace_api_token')
     DYNATRACE_ENV_URL = 'https://djd77724.live.dynatrace.com'
   }
 
