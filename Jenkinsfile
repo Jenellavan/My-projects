@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         SONARQUBE_SERVER = 'SonarQube'
-        NEXUS_URL = 'http://nexus.mitechnology.org:8081'
+        NEXUS_URL = 'http://3.93.15.96:8081'
         NEXUS_REPO = 'ezlearn-release'
         CONTAINER_NAME = 'ezlearn'
         APP_PORT = '8081'          // Must match the port exposed in your Dockerfile
@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                       mvn sonar:sonar \
                         -Dsonar.projectKey=ezlearn \
-                        -Dsonar.host.url=http://sonarqube.mitechnology.org:9000
+                        -Dsonar.host.url=http://sonarqube.54.163.53.76:9000
                     '''
                 }
             }
