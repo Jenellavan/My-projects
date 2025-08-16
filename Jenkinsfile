@@ -33,7 +33,7 @@ pipeline {
                     sh '''
                       mvn sonar:sonar \
                         -Dsonar.projectKey=ezlearn \
-                        -Dsonar.host.url=http://sonarqube.54.163.53.76:9000
+                        -Dsonar.host.url=http://54.163.53.76:9000
                     '''
                 }
             }
