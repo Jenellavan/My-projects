@@ -8,6 +8,7 @@ pipeline {
         CONTAINER_NAME = 'ezlearn'
         APP_PORT = '8081'          // Must match the port exposed in your Dockerfile
         VERSION = '1.0.0'
+        DOCKER_BUILDKIT = '1'      // optional: quiet legacy builder warning
     }
 
     stages {
@@ -79,33 +80,27 @@ pipeline {
             }
         }
 
+        // ---- Fixed: no docker agent; run with docker group via 'sg' ----
         stage('Build Docker Image (Tomcat + WAR)') {
             steps {
                 script {
                     env.IMAGE_TAG = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
                     env.IMAGE_NAME = "ezlearn:${IMAGE_TAG}"
-                    
                 }
-                
-                // --- minimal change: run docker with docker group privileges
                 sh """
-                  sg docker -c \\
-                  'docker build --build-arg WAR_FILE=target/ezlearn.war -t ${IMAGE_NAME} .'
+                  sg docker -c 'docker version'
+                  sg docker -c 'docker build --build-arg WAR_FILE=target/ezlearn.war -t ${IMAGE_NAME} .'
                 """
-                
             }
-          }
-       }
+        }
 
+        // ---- Fixed: no docker agent; run with docker group via 'sg' ----
         stage('Run Container (On Slave)') {
             steps {
                 script {
                     sh """
-                      docker rm -f ${CONTAINER_NAME} || true
-                      docker run -d --name ${CONTAINER_NAME} \
-                        -p ${APP_PORT}:${APP_PORT} \
-                        --restart=always \
-                        ${IMAGE_NAME}
+                      sg docker -c 'docker rm -f ${CONTAINER_NAME} || true'
+                      sg docker -c 'docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:${APP_PORT} --restart=always ${IMAGE_NAME}'
                     """
                 }
             }
@@ -126,4 +121,4 @@ pipeline {
         success { echo "✅ Pipeline executed successfully! (Container running on ${env.NODE_NAME}:${APP_PORT})" }
         failure { echo "❌ Pipeline failed!" }
     }
-} 
+}
