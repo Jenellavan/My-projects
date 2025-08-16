@@ -79,22 +79,37 @@ pipeline {
             }
         }
 
+        // --- updated ---
         stage('Build Docker Image (Tomcat + WAR)') {
+            agent {
+                docker {
+                    image 'docker:27.1-cli'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock --group-add 113 -u 0'
+                    reuseNode true
+                }
+            }
             steps {
                 script {
                     env.IMAGE_TAG = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
                     env.IMAGE_NAME = "ezlearn:${IMAGE_TAG}"
-
-                    sh """
-                      docker build \
-                        --build-arg WAR_FILE=target/ezlearn.war \
-                        -t ${IMAGE_NAME} .
-                    """
                 }
+                sh """
+                  docker build \
+                    --build-arg WAR_FILE=target/ezlearn.war \
+                    -t ${IMAGE_NAME} .
+                """
             }
         }
 
+        // --- updated ---
         stage('Run Container (On Slave)') {
+            agent {
+                docker {
+                    image 'docker:27.1-cli'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock --group-add 113 -u 0'
+                    reuseNode true
+                }
+            }
             steps {
                 script {
                     sh """
