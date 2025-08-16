@@ -84,15 +84,18 @@ pipeline {
                 script {
                     env.IMAGE_TAG = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
                     env.IMAGE_NAME = "ezlearn:${IMAGE_TAG}"
-
-                    sh """
-                      docker build \
-                        --build-arg WAR_FILE=target/ezlearn.war \
-                        -t ${IMAGE_NAME} .
-                    """
+                    
                 }
+                
+                // --- minimal change: run docker with docker group privileges
+                sh """
+                  sg docker -c \\
+                  'docker build --build-arg WAR_FILE=target/ezlearn.war -t ${IMAGE_NAME} .'
+                """
+                
             }
-        }
+          }
+       }
 
         stage('Run Container (On Slave)') {
             steps {
