@@ -77,7 +77,7 @@
         <repository>
             <id>ezlearn-release</id>
             <name>ezlearn release repository</name>
-            <url>http://nexus.mitechnology.org:8081/repository/ezlearn-release/</url>
+            <url>http://nexus.3.93.15.96:8081/repository/ezlearn-release/</url>
         </repository>
     </distributionManagement>
 
@@ -100,3 +100,4 @@
     </dependencies>
 
 </project>
+
