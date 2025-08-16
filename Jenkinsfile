@@ -80,31 +80,29 @@ pipeline {
             }
         }
 
-        // ---- Fixed: no docker agent; run with docker group via 'sg' ----
-        stage('Build Docker Image (Tomcat + WAR)') {
-            steps {
-                script {
-                    env.IMAGE_TAG = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
-                    env.IMAGE_NAME = "ezlearn:${IMAGE_TAG}"
-                }
-                sh """
-                  sg docker -c 'docker version'
-                  sg docker -c 'docker build --build-arg WAR_FILE=target/ezlearn.war -t ${IMAGE_NAME} .'
-                """
-            }
-        }
+     stage('Build Docker Image (Tomcat + WAR)') {
+  steps {
+    script {
+      env.IMAGE_TAG = sh(script: "date +%Y%m%d%H%M%S", returnStdout: true).trim()
+      env.IMAGE_NAME = "ezlearn:${IMAGE_TAG}"
+    }
+    sh """
+      sg docker -c 'docker version'
+      sg docker -c 'DOCKER_BUILDKIT=0 docker build --build-arg WAR_FILE=target/ezlearn.war -t ${IMAGE_NAME} .'
+    """
+  }
+}
 
-        // ---- Fixed: no docker agent; run with docker group via 'sg' ----
-        stage('Run Container (On Slave)') {
-            steps {
-                script {
-                    sh """
-                      sg docker -c 'docker rm -f ${CONTAINER_NAME} || true'
-                      sg docker -c 'docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:${APP_PORT} --restart=always ${IMAGE_NAME}'
-                    """
-                }
-            }
-        }
+stage('Run Container (On Slave)') {
+  steps {
+    script {
+      sh """
+        sg docker -c 'docker rm -f ${CONTAINER_NAME} || true'
+        sg docker -c 'DOCKER_BUILDKIT=0 docker run -d --name ${CONTAINER_NAME} -p ${APP_PORT}:${APP_PORT} --restart=always ${IMAGE_NAME}'
+      """
+    }
+  }
+}
     }
 
     post {
